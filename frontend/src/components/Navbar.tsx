@@ -10,8 +10,6 @@ const Navbar: React.FC = () => {
                 </div>
                 <div className="space-x-4">
                     <Link to="/" className="text-white hover:text-gray-200">Home</Link>
-                    <Link to="/login" className="text-white hover:text-gray-200">Login</Link>
-                    <Link to="/register" className="text-white hover:text-gray-200">Register</Link>
                 </div>
             </div>
         </nav>
