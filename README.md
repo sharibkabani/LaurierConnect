@@ -22,11 +22,14 @@ cd into frontend
 run npm install
 then run npm run dev
 then u should get this:
+
+
   VITE v6.2.2  ready in 1109 ms
 
   ➜  Local:   http://localhost:5173/
   ➜  Network: use --host to expose
   ➜  press h + enter to show help
+  
 
 then the home page should say hello in blue and in the center
 
