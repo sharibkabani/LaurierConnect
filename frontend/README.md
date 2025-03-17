@@ -10,3 +10,16 @@ Currently, two official plugins are available:
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+# COLOUR PALLET
+White: FFFFFF
+Purple: B13DFF
+Black: 000000
+Blue: 4F22FD
+Gold: FFBF00
+
+# Other CSS Design Standards
+Button Border Radius: 12px
+Pop-up Border Radius: 64px
+
+Font: Lexend
