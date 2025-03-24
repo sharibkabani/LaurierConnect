@@ -1,0 +1,86 @@
+
+.container{
+    display: flex;
+    position: fixed;
+    inset: 150px;
+}
+
+.rightUL{
+    display: flex;
+    flex-direction: column;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.2;
+}
+
+.leftUL{
+    display: flex;
+    flex-direction: column;
+    width: 45%;
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+.rows {
+    display: flex;
+    flex-direction: row;
+}
+
+.button{
+    background-color: #b13dff;
+    color: #fff;
+    border-radius: 12px;
+    height: auto;
+    width: 27rem;
+    height: 2.5rem;
+    margin-top: 20px;
+    margin: 5px;
+    font-size: 1.2rem;
+}
+
+.input{
+    border-width: 1px;
+    border-radius: 12px;
+    width: 27rem;
+    height: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+    margin: 5px;
+}
+.shortInput{
+    border-width: 1px;
+    border-radius: 12px;
+    width: 13.2rem;
+    height: 2rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+    margin: 5px;
+}
+
+.longInput{
+    border-width: 1px;
+    border-radius: 12px;
+    width: 27rem;
+    height: 4.2rem;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 10px;
+    margin: 5px;
+}
+
+.h1{
+    color: rgb(0, 0, 0);
+    font-size: 3rem;
+    font-family: 'Boldonse', sans-serif;
+    margin: 10px 0 15px 0;
+
+}
+
+.laurierConnect{
+    color: #4f22fd;
+    font-size: 1rem;
+    font-family: 'Boldonse', sans-serif;
+}

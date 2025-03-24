@@ -1,4 +1,5 @@
 import LoginPopUp from "./components/Login/LoginPopUp";
+import CreateProfile from "./pages/CreateProfile/CreateProfile.jsx"
 
 function App() {
   // this should be blue and in the cneter if ur app is working
@@ -7,7 +8,8 @@ function App() {
   
   <div style={{fontFamily: 'Lexend'}}>
   
-  <LoginPopUp />
+  {/* <CreateProfile />
+  <LoginPopUp /> */}
   
   </div>
   );
