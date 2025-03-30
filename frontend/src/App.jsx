@@ -1,6 +1,7 @@
 import LoginPopUp from "./components/Login/LoginPopUp";
 import CreateProfile from "./pages/CreateProfile/CreateProfile.jsx"
 import SideBarNav from './components/SideBarNav/SideBarNav.jsx'
+import NotificationTab from "./components/NotificationTab/NotificationTab.jsx";
 
 function App() {
   // this should be blue and in the cneter if ur app is working
@@ -10,8 +11,10 @@ function App() {
   <div style={{fontFamily: 'Lexend'}}>
   
   {/* <CreateProfile />
-  <LoginPopUp />
-  <SideBarNav/> */}
+  <LoginPopUp />*/}
+  <NotificationTab/>
+  <SideBarNav/>
+
 
   
   </div>

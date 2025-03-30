@@ -6,6 +6,9 @@
     width: 8.5vh;
     z-index: 999;
     background-color: #1A1A1A;
+    /* border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px; */
+
 }
 
 .navItems{
