@@ -1,0 +1,23 @@
+<!doctype html>
+<html>
+   <body>
+      <table border = 1>
+         <tr>
+               <th> f_name </th>
+               <th> l_name </th>
+               <th> user_id </th>
+               <th> username </th>
+               <th> email </th>
+         </tr>
+         {% for user in users %}
+            <tr>
+               <td> {{ user.get("f_name") }} </td>
+               <td> {{ user.get("l_name") }} </td>
+               <td> {{ user.get("user_id") }} </td>
+               <td> {{ user.get("username") }} </td>
+               <td> {{ user.get("email") }} </td>
+            </tr>
+         {% endfor %}
+      </table>
+   </body>
+</html>
