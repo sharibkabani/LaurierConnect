@@ -83,7 +83,8 @@ def validate_user_login(username, password):
   "status": "string",
   "creation_date": "ISODate",
   "video_url": "string or null",
-  "last_updated": "ISODate"
+  "last_updated": "ISODate",
+  "members" : [references objectid of users]
 }'
 '''
 
