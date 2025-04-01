@@ -1,8 +1,11 @@
 from bson import ObjectId
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify, url_for, session
 from flask_cors import CORS
+from flask import session
 import os
-from datetime import datetime
+from datetime import datetime, timezone
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 from db import (
     find_all_in_collection, create_user, get_user_by_username, get_user_by_id, update_user, delete_user_by_username, delete_user_by_id,
     create_project, get_project_by_id, update_project, delete_project, search_projects_by_keywords,
@@ -13,8 +16,14 @@ from db import (
     send_invitation, update_invitation_status,
     store_recommendation, get_recommendations_for_user
 )
+uri = "mongodb+srv://Fletch:LaurierConnect@laurierconnect.4nbgx.mongodb.net/?retryWrites=true&w=majority&appName=LaurierConnect"
+client = MongoClient(uri, server_api=ServerApi('1'))
 
 
+app = Flask(__name__)
+CORS(app)
+
+app.secret_key = os.urandom(24) 
 app = Flask(__name__)
 CORS(app)
 
