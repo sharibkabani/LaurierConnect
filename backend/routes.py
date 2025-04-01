@@ -33,21 +33,23 @@ def getusers():
 @app.route('/create-user', methods=['POST'])
 def createuser():
     try:
+        # Parse form data
         user_data = request.form.to_dict()
 
-        # check required fields
-        if 'user_id' not in user_data:
-            return jsonify({"error": "Missing required field: user_id"}), 400
+        # Ensure required fields are present
+        required_fields = ['f_name', 'l_name', 'username', 'password', 'email']
+        for field in required_fields:
+            if field not in user_data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
 
-        # convert user_id to an integer
-        try:
-            user_data['user_id'] = int(user_data['user_id'])
-        except ValueError:
-            return jsonify({"error": "Invalid user_id format. It must be an integer."}), 400
-
-        # create the user in the database
-        user_id = create_user(user_data)
-        return jsonify({"message": "User created successfully", "user_id": user_id})
+        # Create the user in the database
+        result = create_user(user_data)
+        if isinstance(result, dict) and "error" in result:
+            return jsonify(result), 400  # Return validation error
+        elif result:
+            return jsonify({"message": "User created successfully", "user_id": user_data['user_id']})
+        else:
+            return jsonify({"error": "Failed to create user"}), 500
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
@@ -122,28 +124,28 @@ def getprojects():
 @app.route('/create-project', methods=['POST'])
 def createproject():
     try:
+        # Parse form data
         project_data = request.form.to_dict()
 
-        # Check required fields
-        if 'project_id' not in project_data or 'owner_id' not in project_data:
-            return jsonify({"error": "Missing required fields: project_id or owner_id"}), 400
+        # Ensure required fields are present
+        required_fields = ['project_title', 'description', 'owner_id', 'keywords', 'status']
+        for field in required_fields:
+            if field not in project_data:
+                return jsonify({"error": f"Missing required field: {field}"}), 400
 
-        # Convert IDs to integers
+        # Convert owner_id to integer
         try:
-            project_data['project_id'] = int(project_data['project_id'])
             project_data['owner_id'] = int(project_data['owner_id'])
         except ValueError:
-            return jsonify({"error": "Invalid ID format. IDs must be integers."}), 400
+            return jsonify({"error": "Invalid owner_id format. It must be an integer."}), 400
 
-        # Convert keywords to an array
-        if 'keywords' in project_data:
+        # Convert keywords to an array if provided as a string
+        if isinstance(project_data['keywords'], str):
             project_data['keywords'] = [keyword.strip() for keyword in project_data['keywords'].split(',')]
 
-        # Convert creation_date and last_updated to ISODate
-        if 'creation_date' in project_data:
-            project_data['creation_date'] = datetime.fromisoformat(project_data['creation_date'])
-        if 'last_updated' in project_data:
-            project_data['last_updated'] = datetime.fromisoformat(project_data['last_updated'])
+        # Automatically add timestamps
+        project_data['creation_date'] = datetime.utcnow()
+        project_data['last_updated'] = datetime.utcnow()
 
         # Convert members to an array of ObjectId
         if 'members' in project_data:
