@@ -1,9 +1,9 @@
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
-from datetime import datetime
-from bson import ObjectId
-from typing import List, Dict, Union
+from typing import Union, List, Dict
+from bson.objectid import ObjectId
 from bson.errors import InvalidId
+from datetime import datetime
 uri = "mongodb+srv://Fletch:LaurierConnect@laurierconnect.4nbgx.mongodb.net/?retryWrites=true&w=majority&appName=LaurierConnect"
 client = MongoClient(uri, server_api=ServerApi('1'))
 try:
@@ -30,7 +30,7 @@ except Exception as e:
 
 def create_user(user):
     result = client['LaurierConnect'].User.insert_one(user)
-    return str(result.inserted_id)  # Return the generated _id
+    return str(result.inserted_id)  # return the generated _id
 
 def get_user_by_username(username):
     user = client['LaurierConnect'].User.find_one({"username": username}, {"_id": 0})  # Exclude the _id field
@@ -43,14 +43,14 @@ def get_user_by_id(user_id):
 
 def update_user(username, updated_data):
     result = client['LaurierConnect'].User.update_one(
-        {"username": username},  # Filter by username
-        {"$set": updated_data}   # Update fields
+        {"username": username},  # filter by username
+        {"$set": updated_data}   # update fields
     )
-    return result.modified_count  # Return the number of documents updated
+    return result.modified_count  # return the number of documents updated
 
 def delete_user_by_username(username):
     result = client['LaurierConnect'].User.delete_one({"username": username})
-    return result.deleted_count  # Return the number of documents deleted
+    return result.deleted_count  # return the number of documents deleted
 
 def delete_user_by_id(user_id):
     from bson.objectid import ObjectId
@@ -60,7 +60,7 @@ def delete_user_by_id(user_id):
 def remove_course_from_user(username, course):
     result = client['LaurierConnect'].User.update_one(
         {"username": username},
-        {"$pull": {"profile.courses": course}}  # Remove the course
+        {"$pull": {"profile.courses": course}}  # remove the course
     )
     return result.modified_count
 
@@ -93,19 +93,33 @@ def create_project(project):
     return str(result.inserted_id)
 
 def get_project_by_id(project_id):
-    project = client['LaurierConnect'].Projects.find_one({"project_id": project_id}, {"_id": 0})
-    return project
+    try:
+        project_id = int(project_id)
+        project = client['LaurierConnect'].Projects.find_one({"project_id": project_id})
+
+        if project:
+            if '_id' in project:
+                project['_id'] = str(project['_id'])  # object id convert to string
+            if 'members' in project and isinstance(project['members'], list):
+                project['members'] = [str(member) for member in project['members']]  # object id in members to strings
+        return project
+    except ValueError:
+        print(f"Invalid project_id: {project_id}")
+        return None
+    except Exception as e:
+        print(f"Error in get_project_by_id: {e}")
+        return None
 
 def get_project(project_id: Union[str, int]):
     try:
-        # Try as ObjectId first if it's a 24-character hex string
+        # find object id
         if isinstance(project_id, str) and len(project_id) == 24:
             try:
                 return client['LaurierConnect'].Projects.find_one({'_id': ObjectId(project_id)})
             except InvalidId:
                 pass
 
-        # Try as numeric project_id
+        # find project id
         return client['LaurierConnect'].Projects.find_one({'project_id': int(project_id)})
     except Exception:
         return None
@@ -122,11 +136,21 @@ def delete_project(project_id):
     return result.deleted_count
 
 def search_projects_by_keywords(keywords):
-    projects = list(client['LaurierConnect'].Projects.find(
-        {"keywords": {"$in": keywords}},
-        {"_id": 0}
-    ))
-    return projects
+    try:
+        # query to find matching keywords
+        projects = client['LaurierConnect'].Projects.find({"keywords": {"$in": keywords}})
+        result = []
+        for project in projects:
+            if '_id' in project:
+                project['_id'] = str(project['_id'])
+
+            # convert members array to strings
+            if 'members' in project and isinstance(project['members'], list):
+                project['members'] = [str(member) for member in project['members']]
+            result.append(project)
+        return result
+    except Exception as e:
+        return [] #if no matches, return here
 
 
 
@@ -311,11 +335,20 @@ def delete_notification(notification_id):
     result = client['LaurierConnect'].Notifications.delete_one({'notification_id': notification_id})
     return result.deleted_count > 0
 
-def find_all_in_collection(collection_name, filter_query={}, projection={"_id": 0}):
+def find_all_in_collection(collection_name, filter_query={}, projection={}):
     try:
         collection = client['LaurierConnect'][collection_name]
         cursor = collection.find(filter_query, projection)
-        return list(cursor)
+        result = []
+        for doc in cursor:
+            # Convert _id to string
+            if '_id' in doc:
+                doc['_id'] = str(doc['_id'])
+            # Convert members array to string if it exists
+            if 'members' in doc and isinstance(doc['members'], list):
+                doc['members'] = [str(member) for member in doc['members']]
+            result.append(doc)
+        return result
     except Exception as e:
         print(f"Error accessing collection {collection_name}: {e}")
         return []
