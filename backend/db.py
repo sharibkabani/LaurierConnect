@@ -29,8 +29,35 @@ except Exception as e:
 '''
 
 def create_user(user):
-    result = client['LaurierConnect'].User.insert_one(user)
-    return str(result.inserted_id)  # return the generated _id
+    try:
+        # Check if email already exists
+        existing_email = client['LaurierConnect'].User.find_one({"email": user['email']})
+        if existing_email:
+            raise ValueError(f"Email '{user['email']}' is already in use.")
+
+        # Check if username already exists
+        existing_username = client['LaurierConnect'].User.find_one({"username": user['username']})
+        if existing_username:
+            raise ValueError(f"Username '{user['username']}' is already in use.")
+
+        # Generate the next user_id
+        user['user_id'] = get_next_sequence_value("user_id")
+        if user['user_id'] is None:
+            raise Exception("Failed to generate user_id")
+
+        # Add timestamps
+        user['creation_date'] = datetime.utcnow()
+        user['last_updated'] = datetime.utcnow()
+
+        # Insert the user into the database
+        result = client['LaurierConnect'].User.insert_one(user)
+        return str(result.inserted_id)  # Return the generated _id
+    except ValueError as ve:
+        print(f"Validation error in create_user: {ve}")
+        return {"error": str(ve)}
+    except Exception as e:
+        print(f"Error in create_user: {e}")
+        return None
 
 def get_user_by_username(username):
     user = client['LaurierConnect'].User.find_one({"username": username}, {"_id": 0})  # exclude the _id field
@@ -102,8 +129,9 @@ def create_project(project):
         if not owner:
             raise ValueError(f"Owner with user_id {project['owner_id']} does not exist.")
 
-        # Assign owner_id to match user_id
-        project['owner_id'] = owner['user_id']
+        # Add timestamps
+        project['creation_date'] = datetime.utcnow()
+        project['last_updated'] = datetime.utcnow()
 
         # Insert the project into the Projects collection
         result = client['LaurierConnect'].Projects.insert_one(project)
@@ -403,4 +431,18 @@ def get_profile_by_id(profile_id):
             profile['_id'] = str(profile['_id'])
         return profile
     except:
+        return None
+
+def get_next_sequence_value(sequence_name):
+    try:
+        # Increment the sequence value and return the new value
+        result = client['LaurierConnect'].Counters.find_one_and_update(
+            {"_id": sequence_name},
+            {"$inc": {"sequence_value": 1}},
+            return_document=True,
+            upsert=True  # Create the counter if it doesn't exist
+        )
+        return result['sequence_value']
+    except Exception as e:
+        print(f"Error in get_next_sequence_value: {e}")
         return None
