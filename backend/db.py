@@ -33,13 +33,20 @@ def create_user(user):
     return str(result.inserted_id)  # return the generated _id
 
 def get_user_by_username(username):
-    user = client['LaurierConnect'].User.find_one({"username": username}, {"_id": 0})  # Exclude the _id field
+    user = client['LaurierConnect'].User.find_one({"username": username}, {"_id": 0})  # exclude the _id field
     return user
 
 def get_user_by_id(user_id):
-    from bson.objectid import ObjectId
-    user = client['LaurierConnect'].User.find_one({"_id": ObjectId(user_id)})
-    return user
+    try:
+        user_id = int(user_id)
+        user = client['LaurierConnect'].User.find_one({"user_id": user_id}, {"_id": 0})  # exclude the _id field
+        return user
+    except ValueError:
+        print(f"Invalid user_id: {user_id}. It must be an integer.")
+        return None
+    except Exception as e:
+        print(f"Error in get_user_by_id: {e}")
+        return None
 
 def update_user(username, updated_data):
     result = client['LaurierConnect'].User.update_one(
@@ -89,8 +96,21 @@ def validate_user_login(username, password):
 '''
 
 def create_project(project):
-    result = client['LaurierConnect'].Projects.insert_one(project)
-    return str(result.inserted_id)
+    try:
+        # Validate that owner_id exists in the Users collection
+        owner = client['LaurierConnect'].User.find_one({"user_id": project['owner_id']})
+        if not owner:
+            raise ValueError(f"Owner with user_id {project['owner_id']} does not exist.")
+
+        # Assign owner_id to match user_id
+        project['owner_id'] = owner['user_id']
+
+        # Insert the project into the Projects collection
+        result = client['LaurierConnect'].Projects.insert_one(project)
+        return str(result.inserted_id)
+    except Exception as e:
+        print(f"Error in create_project: {e}")
+        return None
 
 def get_project_by_id(project_id):
     try:
@@ -160,7 +180,7 @@ def search_projects_by_keywords(keywords):
 {
   "_id": "ObjectId",
   "request_id": "int",
-  "user_id": "int",
+  "applicant_id": "int",
   "project_id": "int",
   "status": "string",
   "created_at": "ISODate"
