@@ -65,7 +65,6 @@ def get_user_by_username(username):
 
 def get_user_by_id(user_id):
     try:
-        user_id = int(user_id)
         user = client['LaurierConnect'].User.find_one({"user_id": user_id}, {"_id": 0})  # exclude the _id field
         return user
     except ValueError:
@@ -75,9 +74,9 @@ def get_user_by_id(user_id):
         print(f"Error in get_user_by_id: {e}")
         return None
 
-def update_user(username, updated_data):
+def update_user(user_id, updated_data):
     result = client['LaurierConnect'].User.update_one(
-        {"username": username},  # filter by username
+        {"user_id": user_id},  # filter by username
         {"$set": updated_data}   # update fields
     )
     return result.modified_count  # return the number of documents updated

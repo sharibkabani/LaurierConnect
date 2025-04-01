@@ -52,19 +52,26 @@ def createuser():
             return jsonify({"error": "Failed to create user"}), 500
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
-@app.route('/get-user/username/<username>', methods=['GET'])
-def getuserbyusername(username):
+    
+    
+@app.route('/login', methods=['POST'])
+def login():
     try:
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        if not username or not password:
+            return jsonify({"error": "Username and password are required"}), 400
+
         user = get_user_by_username(username)
-        if user:
-            return jsonify(user)
+        if user and user['password'] == password:
+            return jsonify({"user_id": user['user_id']})
         else:
-            return jsonify({"error": "User not found"}), 404
+            return jsonify({"error": "Invalid username or password"}), 401
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-@app.route('/get-user/userid/<int:user_id>', methods=['GET'])
+@app.route('/get-user/<int:user_id>', methods=['GET'])
 def getuserbyid(user_id):
     try:
         user = get_user_by_id(user_id)
@@ -75,11 +82,11 @@ def getuserbyid(user_id):
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-@app.route('/update-user/<username>', methods=['PUT'])
-def updateuser(username):
+@app.route('/update-user/<int:user_id>', methods=['PUT'])
+def updateuser(user_id):
     try:
         updated_data = request.form.to_dict()
-        modified_count = update_user(username, updated_data)
+        modified_count = update_user(user_id, updated_data)
         if modified_count > 0:
             return jsonify({"message": "User updated successfully"})
         else:
@@ -87,18 +94,7 @@ def updateuser(username):
     except Exception as e:
         return jsonify({"error": f"An error occurred: {str(e)}"}), 500
 
-@app.route('/delete-user/username/<username>', methods=['DELETE'])
-def deleteuserbyusername(username):
-    try:
-        deleted_count = delete_user_by_username(username)
-        if deleted_count > 0:
-            return jsonify({"message": "User deleted successfully"})
-        else:
-            return jsonify({"error": "User not found"}), 404
-    except Exception as e:
-        return jsonify({"error": f"An error occurred: {str(e)}"}), 500
-
-@app.route('/delete-user/userid/<int:user_id>', methods=['DELETE'])
+@app.route('/delete-user/<int:user_id>', methods=['DELETE'])
 def deleteuserbyid(user_id):
     try:
         deleted_count = delete_user_by_id(user_id)
@@ -207,5 +203,5 @@ def searchprojectsbykeywords():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001) 
 
