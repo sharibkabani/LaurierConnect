@@ -123,18 +123,23 @@ def validate_user_login(username, password):
 
 def create_project(project):
     try:
-        # Validate that owner_id exists in the Users collection
-        owner = client['LaurierConnect'].User.find_one({"user_id": project['owner_id']})
-        if not owner:
-            raise ValueError(f"Owner with user_id {project['owner_id']} does not exist.")
+        # Generate the next project_id
+        last_project = client['LaurierConnect'].Projects.find_one(
+            sort=[("project_id", -1)]  # Sort by project_id in descending order
+        )
+        project['project_id'] = (last_project['project_id'] + 1) if last_project else 1
 
         # Add timestamps
-        project['creation_date'] = datetime.utcnow()
-        project['last_updated'] = datetime.utcnow()
+        project['creation_date'] = datetime.now(timezone.utc)
+        project['last_updated'] = datetime.now(timezone.utc)
+
+        # Initialize members field if not provided
+        if 'members' not in project or not isinstance(project['members'], list):
+            project['members'] = []  # Ensure members is always an array
 
         # Insert the project into the Projects collection
         result = client['LaurierConnect'].Projects.insert_one(project)
-        return str(result.inserted_id)
+        return str(result.inserted_id)  # Return the MongoDB _id as the project identifier
     except Exception as e:
         print(f"Error in create_project: {e}")
         return None
@@ -198,7 +203,6 @@ def search_projects_by_keywords(keywords):
         return result
     except Exception as e:
         return [] #if no matches, return here
-
 
 
 #REQUEST RELATED FUNCTIONS
