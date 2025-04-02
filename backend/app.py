@@ -15,11 +15,9 @@ from api_functions import (
     create_project,
     join_project,
     delete_project,
+    apply_for_project,
+    handle_application,
 )
-
-# MongoDB connection
-uri = "mongodb+srv://Fletch:LaurierConnect@laurierconnect.4nbgx.mongodb.net/?retryWrites=true&w=majority&appName=LaurierConnect"
-client = MongoClient(uri, server_api=ServerApi("1"))
 
 app = Flask(__name__)
 CORS(app)
@@ -49,6 +47,13 @@ app.add_url_rule(
     "/projects/<int:project_id>", "delete_project", delete_project, methods=["DELETE"]
 )
 
+# Application Routes
+app.add_url_rule(
+    "/apply-project", "apply_for_project", apply_for_project, methods=["POST"]
+)
+app.add_url_rule(
+    "/handle-application", "handle_application", handle_application, methods=["POST"]
+)
 
 @app.route("/", methods=["GET"])
 def server():

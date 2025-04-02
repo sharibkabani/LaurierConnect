@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../AuthContext";
 import {
 	FaGoogle,
 	FaLinkedin,
@@ -10,20 +11,48 @@ import {
 	FaEnvelope,
 	FaLock,
 	FaLink,
+	FaUserTag,
 } from "react-icons/fa";
+
+const skillsList = [
+	"React",
+	"Node.js",
+	"Python",
+	"Full-Stack",
+	"Machine Learning",
+	"UI/UX Design",
+	"JavaScript",
+	"TypeScript",
+	"Data Science",
+	"Cloud Computing",
+	"Mobile Development",
+	"DevOps",
+	"Blockchain",
+	"Database Design",
+];
 
 const Register = () => {
 	const [formData, setFormData] = useState({
 		firstName: "",
 		lastName: "",
+		username: "",
 		linkedinLink: "",
 		githubLink: "",
 		email: "",
 		password: "",
 		confirmPassword: "",
+		skills: [],
 	});
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
+	const { login } = useAuth();
+
+	useEffect(() => {
+		// Redirect if user is already logged in
+		if (localStorage.getItem("userId")) {
+			navigate(`/profile/${localStorage.getItem("userId")}`);
+		}
+	}, [navigate]);
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -33,27 +62,73 @@ const Register = () => {
 		}));
 	};
 
-	const handleSubmit = (e) => {
+	const handleSkillToggle = (skill) => {
+		setFormData((prev) => {
+			const skills = prev.skills.includes(skill)
+				? prev.skills.filter((s) => s !== skill)
+				: [...prev.skills, skill];
+			return { ...prev, skills };
+		});
+	};
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setError("");
 
 		if (
 			!formData.firstName ||
 			!formData.lastName ||
+			!formData.username ||
 			!formData.email ||
 			!formData.password ||
 			!formData.confirmPassword
 		) {
-			setError("Please fill in all fields");
+			setError("Please fill in all required fields");
 			return;
 		}
 
 		if (formData.password !== formData.confirmPassword) {
 			setError("Passwords do not match");
 			return;
-    }
+		}
 
-		navigate("/");
+		if (formData.skills.length < 3) {
+			setError("Please select at least 3 skills");
+			return;
+		}
+
+		try {
+			const userData = {
+				first_name: formData.firstName,
+				last_name: formData.lastName,
+				username: formData.username,
+				email: formData.email,
+				password: formData.password,
+				linkedin: formData.linkedinLink,
+				github: formData.githubLink,
+				skills: formData.skills,
+			};
+
+			const response = await fetch("http://localhost:5001/register", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify(userData),
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				login(data.user_id); // Store userId in localStorage and update context
+				navigate(`/profile/${data.user_id}`);
+			} else {
+				const data = await response.json();
+				setError(data.error || "Registration failed. Please try again.");
+			}
+		} catch (error) {
+			console.error("Error during registration:", error);
+			setError("An error occurred. Please try again.");
+		}
 	};
 
 	return (
@@ -63,9 +138,6 @@ const Register = () => {
 					<h1 className="text-2xl font-bold text-[rgb(var(--laurier-black))]">
 						Create an Account
 					</h1>
-					<p className="text-gray-600">
-						Join Laurier Connect to collaborate on projects
-					</p>
 				</div>
 
 				{error && <div className="text-red-600 text-sm mb-4">{error}</div>}
@@ -75,7 +147,7 @@ const Register = () => {
 						<label
 							htmlFor="firstName"
 							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
-							<FaUser className="inline-block mr-2" /> First Name
+							<FaUser className="inline-block mr-2 mb-2" /> First Name
 						</label>
 						<input
 							type="text"
@@ -92,7 +164,7 @@ const Register = () => {
 						<label
 							htmlFor="lastName"
 							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
-							<FaUser className="inline-block mr-2" /> Last Name
+							<FaUser className="inline-block mr-2 mb-2" /> Last Name
 						</label>
 						<input
 							type="text"
@@ -105,11 +177,29 @@ const Register = () => {
 						/>
 					</div>
 
+					{/* Added username field */}
+					<div>
+						<label
+							htmlFor="username"
+							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
+							<FaUserTag className="inline-block mr-2 mb-2" /> Username
+						</label>
+						<input
+							type="text"
+							id="username"
+							name="username"
+							value={formData.username}
+							onChange={handleChange}
+							placeholder="Choose a username"
+							className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(var(--laurier-blue))]"
+						/>
+					</div>
+
 					<div>
 						<label
 							htmlFor="linkedinLink"
 							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
-							<FaLinkedin className="inline-block mr-2" /> LinkedIn Profile
+							<FaLinkedin className="inline-block mr-2 mb-2" /> LinkedIn Profile
 						</label>
 						<input
 							type="url"
@@ -126,7 +216,7 @@ const Register = () => {
 						<label
 							htmlFor="githubLink"
 							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
-							<FaGithub className="inline-block mr-2" /> GitHub Profile
+							<FaGithub className="inline-block mr-2 mb-2" /> GitHub Profile
 						</label>
 						<input
 							type="url"
@@ -143,7 +233,7 @@ const Register = () => {
 						<label
 							htmlFor="email"
 							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
-							<FaEnvelope className="inline-block mr-2" /> Email
+							<FaEnvelope className="inline-block mr-2 mb-2" /> Email
 						</label>
 						<input
 							type="email"
@@ -160,7 +250,7 @@ const Register = () => {
 						<label
 							htmlFor="password"
 							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
-							<FaLock className="inline-block mr-2" /> Password
+							<FaLock className="inline-block mr-2 mb-2" /> Password
 						</label>
 						<input
 							type="password"
@@ -177,7 +267,7 @@ const Register = () => {
 						<label
 							htmlFor="confirmPassword"
 							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
-							<FaLock className="inline-block mr-2" /> Confirm Password
+							<FaLock className="inline-block mr-2 mb-2" /> Confirm Password
 						</label>
 						<input
 							type="password"
@@ -190,33 +280,33 @@ const Register = () => {
 						/>
 					</div>
 
+					<div>
+						<label className="block text-sm font-medium text-[rgb(var(--laurier-black))] mb-2">
+							Select Your Skills
+						</label>
+						<div className="flex flex-wrap gap-2">
+							{skillsList.map((skill) => (
+								<button
+									type="button"
+									key={skill}
+									onClick={() => handleSkillToggle(skill)}
+									className={`px-3 py-1 rounded-full text-sm font-medium ${
+										formData.skills.includes(skill)
+											? "bg-[rgb(var(--laurier-blue))] text-[rgb(var(--laurier-white))]"
+											: "bg-gray-200 text-gray-700"
+									} hover:bg-[rgb(var(--laurier-purple))] hover:text-[rgb(var(--laurier-white))] transition-all`}>
+									{skill}
+								</button>
+							))}
+						</div>
+					</div>
+
 					<button
 						type="submit"
 						className="w-full bg-[rgb(var(--laurier-blue))] text-[rgb(var(--laurier-white))] py-2 rounded-lg hover:bg-[rgb(var(--laurier-purple))] transition-all">
 						Sign Up
 					</button>
 				</form>
-
-				{/* <div className="text-center mt-6">
-					<p className="text-gray-600">Or sign up with</p>
-					<div className="flex justify-center gap-4 mt-4">
-						<button
-							className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-all"
-							onClick={() => handleSocialRegister("Google")}>
-							<FaGoogle /> Google
-						</button>
-						<button
-							className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
-							onClick={() => handleSocialRegister("LinkedIn")}>
-							<FaLinkedin /> LinkedIn
-						</button>
-						<button
-							className="flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-all"
-							onClick={() => handleSocialRegister("GitHub")}>
-							<FaGithub /> GitHub
-						</button>
-					</div>
-				</div> */}
 
 				<div className="text-center mt-6">
 					<p className="text-gray-600">

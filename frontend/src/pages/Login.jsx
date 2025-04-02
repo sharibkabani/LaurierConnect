@@ -1,16 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUser, FaLock } from "react-icons/fa";
+import { useAuth } from "../AuthContext";
 
 const Login = () => {
 	const [username, setUsername] = useState("");
 	const [password, setPassword] = useState("");
 	const [error, setError] = useState("");
 	const navigate = useNavigate();
+	const { login } = useAuth();
 
-	const handleSubmit = (e) => {
+	useEffect(() => {
+		// Redirect if user is already logged in
+		if (localStorage.getItem("userId")) {
+			navigate(`/profile/${localStorage.getItem("userId")}`);
+		}
+	}, [navigate]);
+
+	const handleSubmit = async (e) => {
 		e.preventDefault();
 		setError("");
 
@@ -19,8 +28,27 @@ const Login = () => {
 			return;
 		}
 
-		// Simulate successful login
-		navigate("/");
+		try {
+			const formData = new FormData();
+			formData.append("username", username);
+			formData.append("password", password);
+
+			const response = await fetch("http://localhost:5001/login", {
+				method: "POST",
+				body: formData,
+			});
+			const data = await response.json();
+			if (response.ok) {
+				const id = data.user_id;
+				login(id); // Store userId in localStorage and update context
+				navigate(`/profile/${id}`);
+			} else {
+				setError(data.error || "Login failed. Please try again.");
+			}
+		} catch (error) {
+			console.error("Error during login:", error);
+			return;
+		}
 	};
 
 	return (
