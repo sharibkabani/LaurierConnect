@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --laurier-white: 255 255 255;
+    --laurier-purple: 177 61 255;
+    --laurier-black: 0 0 0;
+    --laurier-blue: 79 34 253;
+    --laurier-yellow: 255 191 0;
+  }
+}

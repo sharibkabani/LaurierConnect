@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import "./App.css"
 
 // Pages
 import Home from "./pages/Home.jsx"
@@ -9,7 +8,6 @@ import Profile from "./pages/Profile.jsx"
 import Collaborators from "./pages/Collaborators.jsx"
 import Login from "./pages/Login.jsx"
 import Register from "./pages/Register.jsx"
-import ApplicationManagement from "./pages/ApplicationManagement.jsx"
 
 // Components
 import Navbar from "./components/Navbar.jsx"
@@ -29,7 +27,6 @@ function App() {
             <Route path="/collaborators" element={<Collaborators />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/applications" element={<ApplicationManagement />} />
           </Routes>
         </main>
         <Footer />

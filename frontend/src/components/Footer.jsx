@@ -1,81 +1,125 @@
-import { Link } from "react-router-dom"
-import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa"
-
-// Use a placeholder logo URL if you don't have the actual image
-const logoPlaceholder = "https://via.placeholder.com/150x50?text=Laurier+Connect"
+import { Link } from "react-router-dom";
+import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const Footer = () => {
-  return (
-    <footer className="footer">
-      <div className="footer-container">
-        <div className="footer-logo">
-          <img src={logoPlaceholder || "/placeholder.svg"} alt="Laurier Connect Logo" className="logo" />
-          <p>Connect. Collaborate. Create.</p>
-        </div>
+	return (
+		<footer className="bg-[rgb(var(--laurier-white))] text-[rgb(var(--laurier-black))] py-10 mt-auto">
+			<div className="max-w-7xl mx-auto px-4 md:px-8 flex flex-col items-center">
+				<div className="w-full text-center mb-8">
+					{/* Logo content if any */}
+				</div>
 
-        <div className="footer-links">
-          <div className="footer-section">
-            <h3>Navigation</h3>
-            <ul>
-              <li>
-                <Link to="/">Home</Link>
-              </li>
-              <li>
-                <Link to="/projects">Projects</Link>
-              </li>
-              <li>
-                <Link to="/collaborators">Collaborators</Link>
-              </li>
-              <li>
-                <Link to="/login">Login</Link>
-              </li>
-            </ul>
-          </div>
+				<div className="flex flex-wrap justify-center gap-12 mb-10">
+					<div className="w-full sm:w-auto text-center">
+						<h3 className="font-semibold text-lg mb-3">Navigation</h3>
+						<ul className="space-y-2">
+							<li>
+								<Link
+									to="/"
+									className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+									Home
+								</Link>
+							</li>
+							<li>
+								<Link
+									to="/projects"
+									className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+									Projects
+								</Link>
+							</li>
+							<li>
+								<Link
+									to="/collaborators"
+									className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+									Collaborators
+								</Link>
+							</li>
+							<li>
+								<Link
+									to="/login"
+									className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+									Login
+								</Link>
+							</li>
+						</ul>
+						<div className="flex justify-center space-x-4 text-xl mt-4">
+							<a
+								href="https://facebook.com"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+								<FaFacebook />
+							</a>
+							<a
+								href="https://twitter.com"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+								<FaTwitter />
+							</a>
+						</div>
+					</div>
 
-          <div className="footer-section">
-            <h3>Resources</h3>
-            <ul>
-              <li>
-                <Link to="/about">About Us</Link>
-              </li>
-              <li>
-                <Link to="/faq">FAQ</Link>
-              </li>
-              <li>
-                <Link to="/contact">Contact</Link>
-              </li>
-              <li>
-                <Link to="/terms">Terms of Service</Link>
-              </li>
-            </ul>
-          </div>
+					<div className="w-full sm:w-auto text-center">
+						<h3 className="font-semibold text-lg mb-3">Resources</h3>
+						<ul className="space-y-2">
+							<li>
+								<Link
+									to="/about"
+									className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+									About Us
+								</Link>
+							</li>
+							<li>
+								<Link
+									to="/faq"
+									className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+									FAQ
+								</Link>
+							</li>
+							<li>
+								<Link
+									to="/contact"
+									className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+									Contact
+								</Link>
+							</li>
+							<li>
+								<Link
+									to="/terms"
+									className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+									Terms of Service
+								</Link>
+							</li>
+						</ul>
+						<div className="flex justify-center space-x-4 text-xl mt-4">
+							<a
+								href="https://instagram.com"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="hover:text-[rgb(var(--laurier-purple))] transition-colors">
+								<FaInstagram />
+							</a>
+							<a
+								href="https://linkedin.com"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="hover:text-[rgb(var(--laurier-blue))] transition-colors">
+								<FaLinkedin />
+							</a>
+						</div>
+					</div>
+				</div>
+			</div>
 
-          <div className="footer-section">
-            <h3>Connect</h3>
-            <div className="social-icons">
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-                <FaFacebook />
-              </a>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-                <FaTwitter />
-              </a>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
-                <FaInstagram />
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-                <FaLinkedin />
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
+			<div className="border-t border-[rgb(var(--laurier-black))] mt-6 pt-6 text-center">
+				<p className="text-sm">
+					&copy; {new Date().getFullYear()} Laurier Connect. All rights
+					reserved.
+				</p>
+			</div>
+		</footer>
+	);
+};
 
-      <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Laurier Connect. All rights reserved.</p>
-      </div>
-    </footer>
-  )
-}
-
-export default Footer
-
+export default Footer;
