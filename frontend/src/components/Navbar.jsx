@@ -1,102 +1,109 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { FaSearch, FaBars, FaTimes, FaUser } from "react-icons/fa"
-
-// Use a placeholder logo URL if you don't have the actual image
-const logoPlaceholder = "https://via.placeholder.com/150x50?text=Laurier+Connect"
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { FaSearch, FaBars, FaTimes, FaUser } from "react-icons/fa";
 
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false) // This would be managed by auth context in a real app
-  const navigate = useNavigate()
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+	const [isLoggedIn, setIsLoggedIn] = useState(false); // This would be managed by auth context in a real app
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
+	const toggleMenu = () => {
+		setIsMenuOpen(!isMenuOpen);
+	};
 
-  const handleLogin = () => {
-    // This would be replaced with actual auth logic
-    setIsLoggedIn(true)
-  }
+	const handleLogout = () => {
+		setIsLoggedIn(false); // In a real app, this would call your logout API
+	};
 
-  const handleLogout = () => {
-    // This would be replaced with actual auth logic
-    setIsLoggedIn(false)
-  }
+	return (
+		<nav className="bg-[rgb(var(--laurier-white))] shadow-md sticky top-0 z-50">
+			<div className="flex items-center justify-between px-4 md:px-8 py-4 max-w-7xl mx-auto">
+				<Link to="/" className="flex items-center">
+					<h1 className="text-[rgb(var(--laurier-blue))] text-xl font-bold">
+						Laurier Connect
+					</h1>
+				</Link>
 
-  return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        <Link to="/" className="logo-container">
-          <img src={logoPlaceholder || "/placeholder.svg"} alt="Laurier Connect Logo" className="logo" />
-        </Link>
+				<div className="block md:hidden cursor-pointer" onClick={toggleMenu}>
+					{isMenuOpen ? (
+						<FaTimes className="text-gray-700 text-xl" />
+					) : (
+						<FaBars className="text-gray-700 text-xl" />
+					)}
+				</div>
 
-        <div className="search-container">
-          <input type="text" placeholder="Search projects, collaborators..." className="search-input" />
-          <button className="search-button">
-            <FaSearch />
-          </button>
-        </div>
+				<ul
+					className={`${
+						isMenuOpen ? "flex" : "hidden"
+					} md:flex flex-col md:flex-row absolute md:relative top-16 md:top-0 left-0 right-0 md:right-auto bg-[rgb(var(--laurier-white))] md:bg-transparent shadow-md md:shadow-none p-4 md:p-0 z-50 md:items-center space-y-4 md:space-y-0 md:space-x-6`}>
+					<li className="text-center md:text-left">
+						<Link
+							to="/projects"
+							className="text-[rgb(var(--laurier-black))] font-medium hover:text-[rgb(var(--laurier-blue))] transition-colors"
+							onClick={() => setIsMenuOpen(false)}>
+							Projects
+						</Link>
+					</li>
+					<li className="text-center md:text-left">
+						<Link
+							to="/collaborators"
+							className="text-[rgb(var(--laurier-black))] font-medium hover:text-[rgb(var(--laurier-blue))] transition-colors"
+							onClick={() => setIsMenuOpen(false)}>
+							Collaborators
+						</Link>
+					</li>
 
-        <div className="menu-icon" onClick={toggleMenu}>
-          {isMenuOpen ? <FaTimes /> : <FaBars />}
-        </div>
+					{isLoggedIn ? (
+						<>
+							<li className="text-center md:text-left">
+								<Link
+									to="/applications"
+									className="text-[rgb(var(--laurier-black))] font-medium hover:text-[rgb(var(--laurier-blue))] transition-colors"
+									onClick={() => setIsMenuOpen(false)}>
+									Applications
+								</Link>
+							</li>
+							<li className="text-center md:text-left">
+								<Link
+									to="/profile/me"
+									className="flex items-center justify-center md:justify-start gap-2 text-[rgb(var(--laurier-black))] font-medium hover:text-[rgb(var(--laurier-blue))] transition-colors"
+									onClick={() => setIsMenuOpen(false)}>
+									<FaUser /> Profile
+								</Link>
+							</li>
+							<li className="text-center md:text-left">
+								<button
+									className="w-full md:w-auto px-4 py-2 bg-[rgb(var(--laurier-white))] text-[rgb(var(--laurier-black))] rounded-lg font-medium hover:bg-[rgb(var(--laurier-purple))] hover:text-[rgb(var(--laurier-white))] transition-colors"
+									onClick={handleLogout}>
+									Logout
+								</button>
+							</li>
+						</>
+					) : (
+						<>
+							<li className="text-center md:text-left">
+								<Link
+									to="/login"
+									className="block w-full md:w-auto px-4 py-2 border border-[rgb(var(--laurier-blue))] text-[rgb(var(--laurier-blue))] rounded-lg font-medium hover:bg-[rgb(var(--laurier-blue))] hover:text-[rgb(var(--laurier-white))] transition-colors"
+									onClick={() => setIsMenuOpen(false)}>
+									Login
+								</Link>
+							</li>
+							<li className="text-center md:text-left">
+								<Link
+									to="/register"
+									className="block w-full md:w-auto px-4 py-2 bg-[rgb(var(--laurier-blue))] text-[rgb(var(--laurier-white))] rounded-lg font-medium hover:bg-opacity-90 transition-colors"
+									onClick={() => setIsMenuOpen(false)}>
+									Register
+								</Link>
+							</li>
+						</>
+					)}
+				</ul>
+			</div>
+		</nav>
+	);
+};
 
-        <ul className={isMenuOpen ? "nav-menu active" : "nav-menu"}>
-          <li className="nav-item">
-            <Link to="/" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-              Home
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/projects" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-              Projects
-            </Link>
-          </li>
-          <li className="nav-item">
-            <Link to="/collaborators" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-              Collaborators
-            </Link>
-          </li>
-          {isLoggedIn ? (
-            <>
-              <li className="nav-item">
-                <Link to="/applications" className="nav-link" onClick={() => setIsMenuOpen(false)}>
-                  Applications
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/profile/me" className="nav-link profile-link" onClick={() => setIsMenuOpen(false)}>
-                  <FaUser /> Profile
-                </Link>
-              </li>
-              <li className="nav-item">
-                <button className="auth-button logout" onClick={handleLogout}>
-                  Logout
-                </button>
-              </li>
-            </>
-          ) : (
-            <>
-              <li className="nav-item">
-                <Link to="/login" className="auth-button login" onClick={() => setIsMenuOpen(false)}>
-                  Login
-                </Link>
-              </li>
-              <li className="nav-item">
-                <Link to="/register" className="auth-button register" onClick={() => setIsMenuOpen(false)}>
-                  Register
-                </Link>
-              </li>
-            </>
-          )}
-        </ul>
-      </div>
-    </nav>
-  )
-}
-
-export default Navbar
-
+export default Navbar;

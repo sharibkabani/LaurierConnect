@@ -1,111 +1,95 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { FaGoogle, FaLinkedin, FaGithub, FaEnvelope, FaLock } from "react-icons/fa"
-
-// Use a placeholder logo URL if you don't have the actual image
-const logoPlaceholder = "https://via.placeholder.com/150x50?text=Laurier+Connect"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { FaUser, FaLock } from "react-icons/fa";
 
 const Login = () => {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState("")
-  const navigate = useNavigate()
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const [error, setError] = useState("");
+	const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setError("")
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		setError("");
 
-    // Basic validation
-    if (!email || !password) {
-      setError("Please enter both email and password")
-      return
-    }
+		if (!username || !password) {
+			setError("Please enter both username and password");
+			return;
+		}
 
-    // In a real app, this would make an API call to authenticate
-    // For demo purposes, we'll just redirect to home
-    navigate("/")
-  }
+		// Simulate successful login
+		navigate("/");
+	};
 
-  const handleSocialLogin = (provider) => {
-    // In a real app, this would initiate OAuth flow
-    console.log(`Logging in with ${provider}`)
-    navigate("/")
-  }
+	return (
+		<div className="min-h-screen bg-[rgb(var(--laurier-white))] flex items-center justify-center px-4">
+			<div className="max-w-md w-full bg-[rgb(var(--laurier-white))] border border-gray-200 rounded-lg shadow-lg p-8">
+				<div className="text-center mb-6">
+					<h1 className="text-2xl font-bold text-[rgb(var(--laurier-black))]">
+						Welcome Back
+					</h1>
+					<p className="text-gray-600">
+						Sign in to continue to Laurier Connect
+					</p>
+				</div>
 
-  return (
-    <div className="auth-page">
-      <div className="auth-container">
-        <div className="auth-header">
-          <img src={logoPlaceholder || "/placeholder.svg"} alt="Laurier Connect Logo" className="auth-logo" />
-          <h1>Welcome Back</h1>
-          <p>Sign in to continue to Laurier Connect</p>
-        </div>
+				{error && <div className="text-red-600 text-sm mb-4">{error}</div>}
 
-        {error && <div className="auth-error">{error}</div>}
+				<form onSubmit={handleSubmit} className="space-y-4">
+					<div>
+						<label
+							htmlFor="username"
+							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
+							<FaUser className="inline-block mr-2" /> Username
+						</label>
+						<input
+							type="text"
+							id="username"
+							value={username}
+							onChange={(e) => setUsername(e.target.value)}
+							placeholder="Enter your username"
+							className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(var(--laurier-blue))]"
+						/>
+					</div>
 
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">
-              <FaEnvelope /> Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-            />
-          </div>
+					<div>
+						<label
+							htmlFor="password"
+							className="block text-sm font-medium text-[rgb(var(--laurier-black))]">
+							<FaLock className="inline-block mr-2" /> Password
+						</label>
+						<input
+							type="password"
+							id="password"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							placeholder="Enter your password"
+							className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(var(--laurier-blue))]"
+						/>
+					</div>
 
-          <div className="form-group">
-            <label htmlFor="password">
-              <FaLock /> Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-            />
-          </div>
+					<button
+						type="submit"
+						className="w-full bg-[rgb(var(--laurier-blue))] text-[rgb(var(--laurier-white))] py-2 rounded-lg hover:bg-[rgb(var(--laurier-purple))] transition-all">
+						Sign In
+					</button>
+				</form>
 
-          <div className="form-actions">
-            <button type="submit" className="auth-submit">
-              Sign In
-            </button>
-            <Link to="/forgot-password" className="forgot-password">
-              Forgot Password?
-            </Link>
-          </div>
-        </form>
+				<div className="text-center mt-6">
+					<p className="text-gray-600">
+						Don't have an account?{" "}
+						<Link
+							to="/register"
+							className="text-[rgb(var(--laurier-blue))] hover:text-[rgb(var(--laurier-purple))]">
+							Sign Up
+						</Link>
+					</p>
+				</div>
+			</div>
+		</div>
+	);
+};
 
-        <div className="social-login">
-          <p>Or sign in with</p>
-          <div className="social-buttons">
-            <button className="social-button google" onClick={() => handleSocialLogin("Google")}>
-              <FaGoogle /> Google
-            </button>
-            <button className="social-button linkedin" onClick={() => handleSocialLogin("LinkedIn")}>
-              <FaLinkedin /> LinkedIn
-            </button>
-            <button className="social-button github" onClick={() => handleSocialLogin("GitHub")}>
-              <FaGithub /> GitHub
-            </button>
-          </div>
-        </div>
-
-        <div className="auth-footer">
-          <p>
-            Don't have an account? <Link to="/register">Sign Up</Link>
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default Login
-
+export default Login;

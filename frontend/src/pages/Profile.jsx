@@ -1,169 +1,158 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useParams, Link } from "react-router-dom"
-import VideoReel from "../components/VideoReel.jsx"
-import { FaStar, FaGraduationCap, FaMapMarkerAlt, FaEnvelope, FaLinkedin, FaGithub, FaEdit } from "react-icons/fa"
+import { useState, useEffect } from "react";
+import { useParams, Link } from "react-router-dom";
+import ProjectCard from "../components/ProjectCard";
+import { FaEnvelope, FaLinkedin, FaGithub } from "react-icons/fa";
 
 // Mock data - would be fetched from API in a real app
 const mockUserProfile = {
-  id: 101,
-  name: "Jane Smith",
-  title: "Full Stack Developer",
-  bio: "Passionate developer with 5+ years of experience building web and mobile applications. Specializing in React, Node.js, and cloud infrastructure.",
-  skills: ["React", "Node.js", "MongoDB", "Express", "AWS", "UI/UX Design", "JavaScript", "TypeScript"],
-  rating: 4.8,
-  education: "BSc Computer Science, Laurier University",
-  location: "Waterloo, ON",
-  email: "jane.smith@example.com",
-  linkedin: "linkedin.com/in/janesmith",
-  github: "github.com/janesmith",
-  image: "https://via.placeholder.com/200x200?text=JS",
-  projects: [
-    {
-      id: 1,
-      title: "AI-Powered Health Assistant",
-      description: "Mobile app using machine learning for personalized health recommendations",
-      role: "Project Lead",
-      videoUrl: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
-      thumbnail: "https://via.placeholder.com/400x225?text=Health+App",
-    },
-    {
-      id: 2,
-      title: "E-commerce Platform",
-      description: "Full-stack e-commerce solution with payment processing and inventory management",
-      role: "Full Stack Developer",
-      videoUrl: "https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4",
-      thumbnail: "https://via.placeholder.com/400x225?text=E-commerce",
-    },
-  ],
-}
+	id: 101,
+	name: "Jane Smith",
+	skills: [
+		"React",
+		"Node.js",
+		"MongoDB",
+		"Express",
+		"AWS",
+		"UI/UX Design",
+		"JavaScript",
+		"TypeScript",
+	],
+	email: "jane.smith@example.com",
+	linkedin: "linkedin.com/in/janesmith",
+	github: "github.com/janesmith",
+	image:
+		"https://static.vecteezy.com/system/resources/thumbnails/009/292/244/small/default-avatar-icon-of-social-media-user-vector.jpg",
+	projects: [
+		{
+			id: 1,
+			title: "AI-Powered Health Assistant",
+			description:
+				"Mobile app using machine learning for personalized health recommendations",
+			owner: "Jane Smith",
+		},
+		{
+			id: 2,
+			title: "E-commerce Platform",
+			description:
+				"Full-stack e-commerce solution with payment processing and inventory management",
+			owner: "Jane Smith",
+		},
+	],
+};
 
 const Profile = () => {
-  const { id } = useParams()
-  const [profile, setProfile] = useState(null)
-  const [isLoading, setIsLoading] = useState(true)
-  const [isCurrentUser, setIsCurrentUser] = useState(false)
+	const { id } = useParams();
+	const [profile, setProfile] = useState(null);
+	const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    // Simulate API fetch
-    setTimeout(() => {
-      setProfile(mockUserProfile)
-      // Check if this is the current user's profile
-      // In a real app, this would compare the profile ID with the logged-in user's ID
-      setIsCurrentUser(id === "me" || id === "101")
-      setIsLoading(false)
-    }, 1000)
-  }, [id])
+	useEffect(() => {
+		// Simulate API fetch
+		setTimeout(() => {
+			setProfile(mockUserProfile);
+			setIsLoading(false);
+		}, 1000);
+	}, [id]);
 
-  if (isLoading) {
-    return (
-      <div className="loading-container">
-        <div className="loader"></div>
-        <p>Loading profile...</p>
-      </div>
-    )
-  }
+	if (isLoading) {
+		return (
+			<div className="flex flex-col items-center justify-center min-h-screen">
+				<div className="w-12 h-12 border-4 border-gray-300 border-t-[rgb(var(--laurier-blue))] rounded-full animate-spin mb-4"></div>
+				<p className="text-gray-600 font-medium">Loading profile...</p>
+			</div>
+		);
+	}
 
-  if (!profile) {
-    return (
-      <div className="not-found">
-        <h2>Profile Not Found</h2>
-        <p>The user profile you're looking for doesn't exist or has been removed.</p>
-        <Link to="/collaborators" className="back-link">
-          Back to Collaborators
-        </Link>
-      </div>
-    )
-  }
+	if (!profile) {
+		return (
+			<div className="flex flex-col items-center justify-center min-h-screen text-center">
+				<h2 className="text-2xl font-bold mb-4">Profile Not Found</h2>
+				<p className="text-gray-600 mb-6">
+					The user profile you're looking for doesn't exist or has been removed.
+				</p>
+				<Link
+					to="/collaborators"
+					className="px-6 py-2 bg-[rgb(var(--laurier-blue))] text-white rounded-lg hover:bg-[rgb(var(--laurier-purple))] transition-colors">
+					Back to Collaborators
+				</Link>
+			</div>
+		);
+	}
 
-  return (
-    <div className="profile-page">
-      <div className="profile-header">
-        <div className="profile-image">
-          <img src={profile.image || "/placeholder.svg"} alt={profile.name} />
-        </div>
+	return (
+		<div className="max-w-5xl mx-auto py-8 px-4">
+			<div className="flex flex-col md:flex-row items-center md:items-start mb-8">
+				<img
+					src={profile.image || "/placeholder.svg"}
+					alt={profile.name}
+					className="w-32 h-32 rounded-full object-cover mb-4 md:mb-0 md:mr-6"
+				/>
+				<div>
+					<div className="flex items-center justify-between mb-2">
+						<h1 className="text-2xl font-bold text-[rgb(var(--laurier-black))]">
+							{profile.name}
+						</h1>
+					</div>
+					<h2 className="text-lg text-gray-600">{profile.title}</h2>
+					<div className="flex flex-wrap gap-4 mt-4">
+						<a
+							href={`mailto:${profile.email}`}
+							className="text-[rgb(var(--laurier-blue))] hover:text-[rgb(var(--laurier-purple))] text-sm flex items-center gap-1">
+							<FaEnvelope /> Email
+						</a>
+						<a
+							href={`https://${profile.linkedin}`}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-[rgb(var(--laurier-blue))] hover:text-[rgb(var(--laurier-purple))] text-sm flex items-center gap-1">
+							<FaLinkedin /> LinkedIn
+						</a>
+						<a
+							href={`https://${profile.github}`}
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-[rgb(var(--laurier-blue))] hover:text-[rgb(var(--laurier-purple))] text-sm flex items-center gap-1">
+							<FaGithub /> GitHub
+						</a>
+					</div>
+				</div>
+			</div>
 
-        <div className="profile-info">
-          <div className="profile-name-section">
-            <h1>{profile.name}</h1>
-            {isCurrentUser && (
-              <Link to="/edit-profile" className="edit-profile-btn">
-                <FaEdit /> Edit Profile
-              </Link>
-            )}
-          </div>
+			<div className="mb-8">
+				<h3 className="text-xl font-bold text-[rgb(var(--laurier-black))] mb-4">
+					Skills
+				</h3>
+				<div className="flex flex-wrap gap-2">
+					{profile.skills.map((skill, index) => (
+						<span
+							key={index}
+							className="px-2 py-1 bg-[rgb(var(--laurier-blue))] text-[rgb(var(--laurier-white))] text-xs font-medium rounded-full">
+							{skill}
+						</span>
+					))}
+				</div>
+			</div>
 
-          <h2>{profile.title}</h2>
+			<div>
+				<h3 className="text-xl font-bold text-[rgb(var(--laurier-black))] mb-4">
+					Projects
+				</h3>
+				<div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+					{profile.projects.map((project) => (
+						<div key={project.id} className="relative">
+							<ProjectCard project={project} />
+							{project.owner === profile.name && (
+								<span className="absolute top-2 right-2 bg-[rgb(var(--laurier-yellow))] text-[rgb(var(--laurier-black))] text-xs font-semibold px-2 py-1 rounded-full">
+									Owner
+								</span>
+							)}
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+};
 
-          <div className="profile-meta">
-            <div className="meta-item">
-              <FaStar className="star-icon" />
-              <span>{profile.rating}</span>
-            </div>
-            <div className="meta-item">
-              <FaGraduationCap />
-              <span>{profile.education}</span>
-            </div>
-            <div className="meta-item">
-              <FaMapMarkerAlt />
-              <span>{profile.location}</span>
-            </div>
-          </div>
-
-          <div className="profile-contact">
-            <a href={`mailto:${profile.email}`} className="contact-link">
-              <FaEnvelope /> Email
-            </a>
-            <a href={`https://${profile.linkedin}`} target="_blank" rel="noopener noreferrer" className="contact-link">
-              <FaLinkedin /> LinkedIn
-            </a>
-            <a href={`https://${profile.github}`} target="_blank" rel="noopener noreferrer" className="contact-link">
-              <FaGithub /> GitHub
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div className="profile-content">
-        <div className="profile-bio">
-          <h3>About</h3>
-          <p>{profile.bio}</p>
-        </div>
-
-        <div className="profile-skills">
-          <h3>Skills</h3>
-          <div className="skills-container">
-            {profile.skills.map((skill, index) => (
-              <span key={index} className="skill-tag">
-                {skill}
-              </span>
-            ))}
-          </div>
-        </div>
-
-        <div className="profile-projects">
-          <h3>Projects</h3>
-          <div className="projects-showcase">
-            {profile.projects.map((project) => (
-              <div key={project.id} className="project-showcase-item">
-                <VideoReel videoUrl={project.videoUrl} thumbnail={project.thumbnail} title={project.title} />
-                <div className="project-showcase-info">
-                  <h4>{project.title}</h4>
-                  <p>{project.description}</p>
-                  <span className="project-role">Role: {project.role}</span>
-                  <Link to={`/projects/${project.id}`} className="view-project-link">
-                    View Project Details
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export default Profile
-
+export default Profile;
