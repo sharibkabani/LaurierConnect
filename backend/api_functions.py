@@ -252,19 +252,28 @@ def join_project():
 
 
 def delete_project(project_id):
+    # First, find the project to be deleted
     project = projects_collection.find_one({"project_id": project_id})
     if not project:
         return jsonify({"error": "Project not found"}), 404
+    
+    # Extract owner_id and members
     owner_id = project.get("owner_id")
     members = project.get("members", [])
+    
+    # Remove project from owner's projects_owned array
     if owner_id:
         users_collection.update_one(
             {"user_id": owner_id}, {"$pull": {"projects_owned": project_id}}
         )
+    
+    # Remove project from joined_projects array of all members
     if members:
         users_collection.update_many(
             {"user_id": {"$in": members}}, {"$pull": {"joined_projects": project_id}}
         )
+    
+    # Delete the project itself
     projects_collection.delete_one({"project_id": project_id})
     return jsonify({"message": "Project deleted successfully"}), 200
 

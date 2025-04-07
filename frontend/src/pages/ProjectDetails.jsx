@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import {
 	FaUser,
 	FaUsers,
@@ -9,15 +9,18 @@ import {
 	FaTimesCircle,
 	FaCalendarAlt,
 	FaTag,
+	FaTrash,
 } from "react-icons/fa";
 
 const ProjectDetails = () => {
 	const { id } = useParams();
+	const navigate = useNavigate();
 	const [project, setProject] = useState(null);
 	const [members, setMembers] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [applicationStatus, setApplicationStatus] = useState(null); // null, 'pending', 'accepted', 'rejected'
 	const [isCurrentUserOwner, setIsCurrentUserOwner] = useState(false);
+	const [showConfirmation, setShowConfirmation] = useState(false);
 
 	useEffect(() => {
 		const fetchProjectDetails = async () => {
@@ -102,6 +105,25 @@ const ProjectDetails = () => {
 		} catch (error) {
 			console.error("Error applying to project:", error);
 			alert("Failed to apply to this project");
+		}
+	};
+
+	const handleDeleteProject = async () => {
+		try {
+			const response = await fetch(`http://localhost:5001/projects/${id}`, {
+				method: "DELETE",
+			});
+
+			if (response.ok) {
+				// Redirect to projects page after deletion
+				navigate("/projects");
+			} else {
+				const data = await response.json();
+				alert(data.error || "Failed to delete project");
+			}
+		} catch (error) {
+			console.error("Error deleting project:", error);
+			alert("Failed to delete project");
 		}
 	};
 
@@ -283,6 +305,43 @@ const ProjectDetails = () => {
 							<p>Your application was not accepted for this project.</p>
 						</div>
 					)}
+				</div>
+			)}
+
+			{/* Add Delete Project button for project owners */}
+			{isCurrentUserOwner && (
+				<div className="mt-8 border-t pt-6">
+					<button
+						onClick={() => setShowConfirmation(true)}
+						className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center">
+						<FaTrash className="inline-block mr-2" />
+						Delete Project
+					</button>
+				</div>
+			)}
+
+			{/* Confirmation Dialog */}
+			{showConfirmation && (
+				<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+					<div className="bg-white p-6 rounded-lg shadow-xl max-w-md mx-4">
+						<h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
+						<p className="text-gray-700 mb-6">
+							Are you sure you want to delete this project? This action cannot
+							be undone.
+						</p>
+						<div className="flex justify-end gap-4">
+							<button
+								onClick={() => setShowConfirmation(false)}
+								className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
+								Cancel
+							</button>
+							<button
+								onClick={handleDeleteProject}
+								className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+								Delete
+							</button>
+						</div>
+					</div>
 				</div>
 			)}
 		</div>
